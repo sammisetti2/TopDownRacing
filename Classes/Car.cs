@@ -17,6 +17,13 @@ public partial class Car : CharacterBody2D
     int Braking = -450;
     int MaxSpeedReverse = 250;
 
+    //Speed above you start sliding/drifting
+    int SlipSpeed = 400;
+    //How slippery it is when above slip speed
+    float TractionFast = 0.1f;
+    //How slippery it is when below slip speed
+    float TractionSlow = 0.7f;
+
     public override void _Ready()
     {
         base._Ready();
@@ -82,23 +89,29 @@ public partial class Car : CharacterBody2D
 
     public void CalculateSteering(double delta)
     {
-        //1. Find the wheel positions
+        //Find the wheel positions
         var rearWheel = Position - Transform.X * WheelBase / 2;
         var frontWheel = Position + Transform.X * WheelBase / 2;
 
-        //2. Move the wheels forward
+        //Move the wheels forward
         rearWheel += Velocity * (float)delta;
         frontWheel += Velocity.Rotated(SteerDirection) * (float)delta;
 
-        //3. Find the new direction vector
+        //Find the new direction vector
         var newHeading = (frontWheel - rearWheel).Normalized();
 
-        //4. Set the Velocity to new direction depending on if you're acceleration or reversing
+        var traction = TractionSlow;
+        if (Velocity.Length() > SlipSpeed)
+        {
+            traction = TractionFast;
+        }
+
+        //Set the Velocity to new direction depending on if you're acceleration or reversing
         var dotProduct = newHeading.Dot(Velocity.Normalized());
 
         if (dotProduct > 0)
         {
-            Velocity = newHeading * Velocity.Length();
+            Velocity = Velocity.Lerp(newHeading * Velocity.Length(), traction);
         }
         if (dotProduct < 0)
         {
