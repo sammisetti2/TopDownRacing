@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public partial class Car : CharacterBody2D
+public partial class Car_2 : CharacterBody2D
 {
     Vector2 CarLocation;
     float CarHeading;
@@ -64,24 +64,24 @@ public partial class Car : CharacterBody2D
     public void GetInput()
     {
         var turn = 0;
-        if (Input.IsActionPressed("turnRight"))
+        if (Input.IsActionPressed("turnRight_player2"))
         {
             ++turn;
         }
 
-        if (Input.IsActionPressed("turnLeft"))
+        if (Input.IsActionPressed("turnLeft_player2"))
         {
             --turn;
         }
 
         SteerDirection = turn * Mathf.DegToRad(SteerAngle);
 
-        if (Input.IsActionPressed("accelerate"))
+        if (Input.IsActionPressed("accelerate_player2"))
         {
             Acceleration = Transform.X * EnginePower;
         }
 
-        if (Input.IsActionPressed("brake"))
+        if (Input.IsActionPressed("brake_player2"))
         {
             Acceleration = Transform.X * Braking;
         }
@@ -121,5 +121,4 @@ public partial class Car : CharacterBody2D
         //4. Set the rotation to the new direction
         Rotation = newHeading.Angle();
     }
-
 }
